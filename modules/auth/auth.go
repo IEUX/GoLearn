@@ -2,9 +2,12 @@ package auth
 
 import (
 	"Golearn/modules/client"
+	"Golearn/modules/database"
+	"fmt"
 	"net/http"
+	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 var JwtKey = []byte("M4st3r_0f_Pupp3ts")
@@ -17,11 +20,52 @@ type Creds struct {
 
 type Claims struct {
 	Email string `json:"email"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 func Login(res http.ResponseWriter, req *http.Request) {
-	//TODO
+	client.CORSManager(res, req)
+	if req.Method == "POST" {
+		var user Creds
+		user.Email = req.FormValue("email")
+		user.Password = req.FormValue("password")
+		if user.Email == "" || user.Password == "" {
+			res.WriteHeader(http.StatusBadRequest)
+			res.Write([]byte("Email or password is empty"))
+			return
+		}
+		if !database.CheckUserExist(user.Email) {
+			res.WriteHeader(http.StatusUnauthorized)
+			res.Write([]byte("User does not exist"))
+			return
+		}
+		dbPassword := database.GetUserPassword(user.Email)
+		if dbPassword != database.HashPassword(user.Password) {
+			res.WriteHeader(http.StatusUnauthorized)
+			res.Write([]byte("Wrong password"))
+			return
+		}
+		expirationTime := time.Now().Add(5 * time.Minute)
+		claims := &Claims{
+			Email: user.Email,
+			RegisteredClaims: jwt.RegisteredClaims{
+				ExpiresAt: jwt.NewNumericDate(expirationTime),
+			},
+		}
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+		tokenString, err := token.SignedString(JwtKey)
+		if err != nil {
+			res.WriteHeader(http.StatusInternalServerError)
+			res.Write([]byte("Error while signing token"))
+			return
+		}
+		http.SetCookie(res, &http.Cookie{
+			Name:    "token",
+			Value:   tokenString,
+			Expires: expirationTime,
+		})
+		http.Redirect(res, req, "/", http.StatusFound)
+	}
 }
 
 func Register(res http.ResponseWriter, req *http.Request) {
@@ -33,8 +77,17 @@ func Register(res http.ResponseWriter, req *http.Request) {
 		user.Password = req.FormValue("password")
 		if user.Email == "" || user.Username == "" || user.Password == "" {
 			res.WriteHeader(http.StatusBadRequest)
+			res.Write([]byte("Email, username or password is empty"))
 			return
 		}
+		if database.CheckUserExist(user.Email) {
+			res.WriteHeader(http.StatusConflict)
+			res.Write([]byte("User already exist during insertion"))
+			return
+		}
+		fmt.Println("Continue")
+		database.InsertUser(user.Username, user.Email, user.Password)
+		Login(res, req)
 	}
 }
 

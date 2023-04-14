@@ -3,7 +3,8 @@ package client
 import "net/http"
 
 func HomePage(res http.ResponseWriter, req *http.Request) {
-	//TODO
+	res.Write([]byte("Home page"))
+	res.WriteHeader(http.StatusOK)
 }
 
 func CORSManager(res http.ResponseWriter, req *http.Request) {
