@@ -3,7 +3,6 @@ package auth
 import (
 	"Golearn/modules/client"
 	"Golearn/modules/database"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -20,7 +19,7 @@ type Creds struct {
 
 type Claims struct {
 	Email string `json:"email"`
-	jwt.RegisteredClaims
+	jwt.StandardClaims
 }
 
 func Login(res http.ResponseWriter, req *http.Request) {
@@ -48,8 +47,9 @@ func Login(res http.ResponseWriter, req *http.Request) {
 		expirationTime := time.Now().Add(5 * time.Minute)
 		claims := &Claims{
 			Email: user.Email,
-			RegisteredClaims: jwt.RegisteredClaims{
-				ExpiresAt: jwt.NewNumericDate(expirationTime),
+			StandardClaims: jwt.StandardClaims{
+				// In JWT, the expiry time is expressed as unix milliseconds
+				ExpiresAt: expirationTime.Unix(),
 			},
 		}
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -63,8 +63,9 @@ func Login(res http.ResponseWriter, req *http.Request) {
 			Name:    "token",
 			Value:   tokenString,
 			Expires: expirationTime,
+			Path:    "/",
 		})
-		http.Redirect(res, req, "/", http.StatusFound)
+		http.Redirect(res, req, "/", http.StatusSeeOther)
 	}
 }
 
@@ -85,7 +86,6 @@ func Register(res http.ResponseWriter, req *http.Request) {
 			res.Write([]byte("User already exist during insertion"))
 			return
 		}
-		fmt.Println("Continue")
 		database.InsertUser(user.Username, user.Email, user.Password)
 		Login(res, req)
 	}

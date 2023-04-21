@@ -1,10 +1,15 @@
 package client
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
 func HomePage(res http.ResponseWriter, req *http.Request) {
-	res.Write([]byte("Home page"))
+	CORSManager(res, req)
+	fmt.Println(req.Cookies())
 	res.WriteHeader(http.StatusOK)
+	res.Write([]byte("Home page"))
 }
 
 func CORSManager(res http.ResponseWriter, req *http.Request) {
