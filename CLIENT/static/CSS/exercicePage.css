@@ -3,6 +3,11 @@
     font-family: 'Roboto';
 }
 
+body {
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
 header {
     height: 15vh;
     width: 100vw;
@@ -20,26 +25,26 @@ header .box-logo {
 
 header .box-logo .logo {
     font-size: 2rem;
-    color: #CC7832;
+    color: #6AD7E5;
     font-weight: 900;
     padding-left: 15%;
 }
 
 header .links {
-    width: 70%
+    width: 65%
 }
 
 header .buttons {
-    width: 10%;
+    width: 15%;
     height: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-evenly;
 }
 
 header .buttons .login-button{
     color: hsl(0, 0%, 80%);
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     margin-right: 5%;
 }
 
@@ -48,16 +53,16 @@ header .buttons .signup-button{
     border: solid 1px hsl(0, 0%, 80%);
     border-radius: 2px;
     color: hsl(0, 0%, 80%);
-    font-size: 1.2rem;
+    font-size: 1.5rem;
 }
 
 header .buttons .login-button:hover{
-    color: #CC7832;
+    color: #6AD7E5;
 }
 
 header .buttons .signup-button:hover {
-    color: #CC7832;
-    border: solid 1px #CC7832;
+    color: #6AD7E5;
+    border: solid 1px #6AD7E5;
 }
 
 .content {
@@ -122,7 +127,7 @@ a{
 }
 
 .content .nav .links .exercice-link:hover .link-title{
-    color: #CC7832;
+    color: #6AD7E5;
 }
 
 .content .nav .links .exercice-link .ping {
@@ -213,12 +218,11 @@ a{
 .content .exercice .output .submit .submitButton {
     height: 50%;
     width: 20%;
-    background-color: #CC7832;
-    border: solid 2px hsl(0, 0%, 80%);
+    background-color: #6AD7E5;
+    border: solid 2px #292929;
     font-weight: bolder;
-    color: hsl(0, 0%, 80%);
+    color: #292929;
     border-radius: 40px;
-    padding: 2%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -248,4 +252,3 @@ a{
     height: 100%;
     width: 100%;
 }
-

@@ -1,4 +1,4 @@
-package sandboxcontainer
+package container
 
 import (
 	"bytes"
@@ -79,7 +79,7 @@ func CopyGoMod(path string) {
 	}
 }
 
-func TestCode(user string) {
+func TestCode(user string) []byte {
 	//CLI Commmands
 	build := "cd " + user[2:] + " && sudo docker build -t 'golearnbox' ."
 	runDocker := "sudo docker run golearnbox"
@@ -99,7 +99,8 @@ func TestCode(user string) {
 		}
 		fmt.Println("--- Error during compilation ---")
 		fmt.Println(string(bytes.Join(sendBackErr, []byte("\n"))))
-		return
+		fmt.Println(err)
+		return nil
 	}
 	//-[RUN DOCKER IMAGE]-
 	result, err := cmd.Output()
@@ -107,7 +108,7 @@ func TestCode(user string) {
 	out, err := exec.Command("/bin/sh", "-c", runDocker).Output()
 	if err != nil {
 		fmt.Println(err)
-		return
+		return nil
 	}
-	fmt.Printf("%s", out)
+	return out
 }

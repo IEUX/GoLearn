@@ -1,0 +1,143 @@
+* {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    font-family: 'Roboto';
+}
+
+body {
+    background: rgb(25,25,25);
+    background: linear-gradient(180deg, rgba(25,25,25,1) 0%, rgba(41,41,41,1) 15%);
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: #666666 0px 0px 10px 0px;
+}
+
+body .container {
+    background-color: #f2f2f2;
+    width: 60%;
+    height: 65%;
+    border-radius: 30px;
+    display: flex;
+}
+
+body .container .presentation {
+    background-color: #666666;
+    width: 40%;
+    height: 100%;
+    border-radius: 30px 0 0 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+body .container .presentation .circle {
+    margin-top: 5%;
+    background-color: #FFFFFF;
+    width: 50%;
+    height: 30%;
+    border-radius: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+body .container .presentation .logo {
+    width: 100% ;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+body .container .login {
+    width: 60%;
+    height: 100%;
+    background-color: #666666;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+body .container .login h2 {
+    font-size: 2.5rem;
+    font-weight: 500;
+    color: #6AD7E5;
+}
+
+body .container .login form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    width: 55%;
+    height: 70%;
+}
+
+body .container .login form .inputs {
+    width: 100%;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+body .container .login form .inputs .labelAndInput {
+    display: flex;
+    flex-direction: column;
+}
+
+body .container .login form .inputs .labelAndInput label{
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: hsl(0, 0%, 80%);
+}
+
+body .container .login form .inputs .labelAndInput input {
+    width: 94%;
+    height: 40px;
+    border: #f2f2f2 2px solid;
+    margin-right: 2px;
+    outline: none;
+    font-size: 1.2rem;
+    font-weight: 500;
+    border-radius: 10px;
+    padding-left: 3%;
+}
+
+body .container .login form .inputs .labelAndInput input:focus {
+    border: #666666 2px solid;
+}
+body .container .login form .submit-button{
+    width: 100%;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #6AD7E5;
+    border-radius: 10px;
+    border: none;
+    color: #f2f2f2;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+body .container .login form .submit-button:hover {
+    cursor: pointer;
+    background-color: #f2f2f2;
+    color: #6AD7E5;
+    border: #6AD7E5 4px solid;
+}
+
+body .container .login p {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: hsl(0, 0%, 80%);
+}
+
+body .container .login a {
+    color: #6AD7E5;
+}

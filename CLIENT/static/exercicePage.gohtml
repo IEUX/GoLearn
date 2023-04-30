@@ -10,6 +10,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/go/go.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/darcula.min.css">
+    <script type="text/javascript" src="plugin/codemirror/lib/codemirror.js"></script>
 </head>
 <body>
     <header>
@@ -18,8 +19,13 @@
         </div>
         <div class="links"></div>
         <div class="buttons">
-            <a class="login-button" href="/login">login</a>
-            <a class="signup-button" href="/signup">signup</a>
+        {{if .IsConnected}}
+            <p style="color: #F6D2A2;font-size: 1.2rem;">Welcome {{.User}}</p>
+            <a class="signup-button" href="/logout">Logout</a>
+        {{else}}
+            <a class="login-button" href="/login">Login</a>
+            <a class="signup-button" href="/signup">Sign Up</a>
+        {{end}}
         </div>
     </header>
     <div class="content">
@@ -57,11 +63,10 @@
                     <hr>
                 </div>
                 <div class="stdout">
-                    <p class="text">{{.ExerciceOutput}}</p>
+                    <p class="text" id="out">{{.ExerciceOutput}}</p>
                 </div>
                 <div class="submit">
-                    <button class="submitButton" type="button"> Run Code &#129302; </button>
-
+                    <input class="submitButton" type="button" value="Run Code &#129302;" onclick="sendCode()"></input>
                 </div>
             </div>
             <div class="input">
@@ -70,19 +75,36 @@
                     <hr>
                 </div>
                 <div class="codeContainer">
-                    <div class="code" id="editor"></div>
+                    <textarea class="code" id="code" name="editor"></textarea>
                 </div>
             </div>
         </div>
     </div>
 </body>
-<script>
-    CodeMirror(document.querySelector('#editor'), {
-  lineNumbers: true,
-  tabSize: 2,
-  value: 'package main',
-  mode: 'text/x-go',
-  theme: 'darcula'
+<script type="text/javascript">
+
+ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+            styleActiveLine: true,
+            lineNumbers: true,
+            matchBrackets: true,
+            mode: 'text/x-go',
+            theme: 'darcula',
 });
+function sendCode() {
+    fetch('/sendCode', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            code: editor.getValue(),
+        })
+    }).then(resp => resp.json())
+  .then(data => {
+    document.getElementById("out").innerHTML = data.Result; 
+   })
+  .catch(err => { console.log(err) });
+}
 </script>   
 </html>
