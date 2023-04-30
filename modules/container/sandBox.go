@@ -97,10 +97,8 @@ func TestCode(user string) []byte {
 			lines := bytes.Split([]byte(matches[1]), []byte("\n"))
 			sendBackErr = lines[1:]
 		}
-		fmt.Println("--- Error during compilation ---")
-		fmt.Println(string(bytes.Join(sendBackErr, []byte("\n"))))
-		fmt.Println(err)
-		return nil
+		errResult := "--- Error during compilation ---<br>" + string(bytes.Join(sendBackErr, []byte("<br>")))
+		return []byte(errResult)
 	}
 	//-[RUN DOCKER IMAGE]-
 	result, err := cmd.Output()
