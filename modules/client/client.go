@@ -21,7 +21,7 @@ type exercicePageVars struct {
 	ExerciceOutput string
 	ExercicesList  []ExerciceLink
 	User           string
-	IsConnected    bool
+	IsNotHome      bool
 }
 
 type ExerciceLink struct {
@@ -41,20 +41,21 @@ func NotLogged(res http.ResponseWriter, req *http.Request) {
 }
 
 func ExercicePage(res http.ResponseWriter, req *http.Request) {
-	var isConnected bool
-	c, err := req.Cookie("token")
-	if err != nil || c == nil {
-		isConnected = false
-	} else {
-		isConnected = true
-	}
+	var IsNotHome bool
 	title := strings.Split(req.URL.Path, "/exercice/")[1]
 	currentLogIn, isOk := auth.ExtractClaims(res, req)
 	if !isOk {
 		http.Redirect(res, req, "/notLogged", http.StatusSeeOther)
 		return
 	}
-	currentExersise := database.GetExerciseByName(title)
+	var currentExersise database.Exercise
+	if title != "" {
+		currentExersise = database.GetExerciseByName(title)
+		IsNotHome = true
+	} else {
+		currentExersise = database.Exercise{IdExercise: 0, Title: "Welcome to GoLearn", Prompt: "Select an exercise to start learning Go !", Difficulty: 0}
+		IsNotHome = false
+	}
 	//PREP Exercises List
 	exercicesList := []ExerciceLink{}
 	exercices := database.GetExerciseNameList()
@@ -73,10 +74,10 @@ func ExercicePage(res http.ResponseWriter, req *http.Request) {
 		ExerciceOutput: "Click Run Code to test you code !",
 		ExercicesList:  exercicesList,
 		User:           currentLogIn.Name,
-		IsConnected:    isConnected,
+		IsNotHome:      IsNotHome,
 	}
 	tmpl := template.Must(template.ParseFiles("./CLIENT/static/exercicePage.gohtml"))
-	err = tmpl.Execute(res, pageData)
+	err := tmpl.Execute(res, pageData)
 	if err != nil {
 		log.Println(err)
 		res.WriteHeader(http.StatusInternalServerError)
