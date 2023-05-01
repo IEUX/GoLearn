@@ -2,6 +2,7 @@ package client
 
 import (
 	"Golearn/modules/auth"
+	"Golearn/modules/compare"
 	"Golearn/modules/container"
 	"Golearn/modules/database"
 	"encoding/json"
@@ -116,10 +117,12 @@ func SendCode(res http.ResponseWriter, req *http.Request) {
 	jsonResult := Result{
 		Result: string(result),
 	}
-	fmt.Println((jsonResult.Result))
+	fmt.Println(jsonResult.Result)
 	jsonData, err := json.Marshal(jsonResult)
 	if err != nil {
 		log.Println(err)
 	}
 	res.Write(jsonData)
+	compare.Compar(compare.GetSolution(req), string(result), res, req)
+
 }

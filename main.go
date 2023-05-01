@@ -27,7 +27,6 @@ func main() {
 	// 	log.Println(err)
 	// }
 	// fmt.Println("test done in " + time.Since(start).String())
-	// compare.Compar(compare.GetSolution(), userResponse)
 
 	cnx := database.GetDbInstance()
 	defer cnx.Close()
