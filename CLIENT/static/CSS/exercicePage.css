@@ -228,6 +228,13 @@ a{
     align-items: center;
 }
 
+.content .exercice .output .submit .submitButton:hover { 
+    background-color: #292929;
+    color: #6AD7E5;
+    cursor: pointer;
+}
+
+
 .content .exercice .input {
     grid-column: 2/3;
     grid-row: 2/4;
