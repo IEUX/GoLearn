@@ -4,8 +4,9 @@ import (
 	"crypto/sha1"
 	"database/sql"
 	"encoding/hex"
-	_ "github.com/mattn/go-sqlite3"
 	"log"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type User struct {
@@ -45,7 +46,7 @@ func GetDbInstance() *sql.DB {
 
 func CheckUserExist(email string) bool {
 	var count int
-	err := GetDbInstance().QueryRow("SELECT count(*) FROM Users WHERE Email = ?", email).Scan(&count)
+	err := GetDbInstance().QueryRow("SELECT count(*) FROM User WHERE Email = ?", email).Scan(&count)
 	if err != nil {
 		log.Println("[DATABASE] Failed to check user exist [ERR]: ", err)
 		return true
@@ -58,7 +59,7 @@ func CheckUserExist(email string) bool {
 
 func InsertUser(name string, email string, password string) {
 	password = HashPassword(password)
-	_, err := GetDbInstance().Exec("INSERT INTO Users (Progression, Name, Email, Pwd, Score) VALUES (?, ?, ?, ?, ?)", 0, name, email, password, 0)
+	_, err := GetDbInstance().Exec("INSERT INTO User (Progression, Username, Email, Password, Exp) VALUES (?, ?, ?, ?, ?)", 0, name, email, password, 0)
 	if err != nil {
 		log.Println("[DATABASE] Failed to insert user [ERR]: ", err)
 	}
@@ -66,7 +67,7 @@ func InsertUser(name string, email string, password string) {
 
 func GetUserPassword(email string) string {
 	var password string
-	err := GetDbInstance().QueryRow("SELECT Pwd FROM Users WHERE Email = ?", email).Scan(&password)
+	err := GetDbInstance().QueryRow("SELECT Password FROM User WHERE Email = ?", email).Scan(&password)
 	if err != nil {
 		log.Println("[DATABASE] Failed to get user password [ERR]: ", err)
 		return ""
@@ -85,7 +86,7 @@ func HashPassword(password string) string {
 
 func GetUserByMail(mail string) User {
 	var user User
-	err := GetDbInstance().QueryRow("SELECT * FROM Users WHERE Email = ?", mail).Scan(&user.IdUser, &user.Progression, &user.Name, &user.Email, &user.Pwd, &user.Score)
+	err := GetDbInstance().QueryRow("SELECT * FROM User WHERE Email = ?", mail).Scan(&user.IdUser, &user.Progression, &user.Name, &user.Email, &user.Pwd, &user.Score)
 	if err != nil {
 		log.Println("[DATABASE] Failed to get user by mail [ERR]: ", err)
 
