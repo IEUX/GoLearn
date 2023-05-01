@@ -4,9 +4,8 @@ import (
 	"crypto/sha1"
 	"database/sql"
 	"encoding/hex"
-	"log"
-
 	_ "github.com/mattn/go-sqlite3"
+	"log"
 )
 
 type User struct {
@@ -82,4 +81,14 @@ func HashPassword(password string) string {
 	h.Write([]byte(password))
 	sha1Hash := hex.EncodeToString(h.Sum(nil))
 	return sha1Hash
+}
+
+func GetUserByMail(mail string) User {
+	var user User
+	err := GetDbInstance().QueryRow("SELECT * FROM Users WHERE Email = ?", mail).Scan(&user.IdUser, &user.Progression, &user.Name, &user.Email, &user.Pwd, &user.Score)
+	if err != nil {
+		log.Println("[DATABASE] Failed to get user by mail [ERR]: ", err)
+
+	}
+	return user
 }

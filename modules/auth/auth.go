@@ -108,3 +108,40 @@ func Logout(res http.ResponseWriter, req *http.Request) {
 	http.SetCookie(res, clearCookie)
 	http.Redirect(res, req, "/", http.StatusFound)
 }
+
+func ExtractClaims(w http.ResponseWriter, r *http.Request) {
+	c, err := r.Cookie("token")
+	if err != nil {
+		if err == http.ErrNoCookie {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	tknStr := c.Value
+
+	claims := &Claims{}
+
+	tkn, err := jwt.ParseWithClaims(tknStr, claims, func(token *jwt.Token) (interface{}, error) {
+		return JwtKey, nil
+	})
+	if err != nil {
+		if err == jwt.ErrSignatureInvalid {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if !tkn.Valid {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	fmt.Printf("%s\n", claims.Email)
+	var user database.User
+	user = database.GetUserByMail(claims.Email)
+	fmt.Println(user)
+}

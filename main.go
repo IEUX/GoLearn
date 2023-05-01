@@ -17,15 +17,17 @@ type App struct {
 }
 
 func main() {
+
 	// start := time.Now()
-	// code := "package main\nimport \"fmt\"\nfunc main) {\nfmt.Println(\"Hello World!\")\n}"
+	// code := "package main\nimport \"fmt\"\nfunc main() {\nfmt.Println(\"Hello World!\")\n}"
 	// userFolder := container.CreateCodeFile("USER_", code)
-	// container.TestCode(userFolder)
+	// userResponse := container.TestCode(userFolder)
 	// err := os.RemoveAll(userFolder)
 	// if err != nil {
 	// 	log.Println(err)
 	// }
 	// fmt.Println("test done in " + time.Since(start).String())
+	// compare.Compar(compare.GetSolution(), userResponse)
 
 	cnx := database.GetDbInstance()
 	defer cnx.Close()
