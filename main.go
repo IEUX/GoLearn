@@ -1,10 +1,14 @@
 package main
 
 import (
+	compare "Golearn/modules/compare"
+	"Golearn/modules/database"
 	container "Golearn/modules/sandBoxContainer"
+	"Golearn/modules/server"
 	"database/sql"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"time"
 
@@ -17,20 +21,22 @@ type App struct {
 }
 
 func main() {
+
 	start := time.Now()
 	code := "package main\nimport \"fmt\"\nfunc main() {\nfmt.Println(\"Hello World!\")\n}"
 	userFolder := container.CreateCodeFile("USER_", code)
-	container.TestCode(userFolder)
+	userResponse := container.TestCode(userFolder)
 	err := os.RemoveAll(userFolder)
 	if err != nil {
 		log.Println(err)
 	}
 	fmt.Println("test done in " + time.Since(start).String())
+	compare.Compar(compare.GetSolution(), userResponse)
 
-	// cnx := database.GetDbInstance()
-	// defer cnx.Close()
-	// server := server.InitServer()
-	// port := ":8080"
-	// fmt.Println("Server is running on http://localhost" + port)
-	// http.ListenAndServe(port, server)
+	cnx := database.GetDbInstance()
+	defer cnx.Close()
+	server := server.InitServer()
+	port := ":8080"
+	fmt.Println("Server is running on http://localhost" + port)
+	http.ListenAndServe(port, server)
 }
