@@ -10,7 +10,6 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.38.0/mode/go/go.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/darcula.min.css">
-    <script type="text/javascript" src="plugin/codemirror/lib/codemirror.js"></script>
 </head>
 <body>
     <header>
@@ -19,18 +18,13 @@
         </div>
         <div class="links"></div>
         <div class="buttons">
-        {{if .IsConnected}}
             <p style="color: #F6D2A2;font-size: 1.2rem;">Welcome {{.User}}</p>
             <a class="signup-button" href="/logout">Logout</a>
-        {{else}}
-            <a class="login-button" href="/login">Login</a>
-            <a class="signup-button" href="/signup">Sign Up</a>
-        {{end}}
         </div>
     </header>
     <div class="content">
         <div class="nav">
-            <p class="title">Exercices</p>
+            <a class="title" href="/exercice">&#127969; Exercice</a>
             <div class="links">
                 {{range .ExercicesList}}
                     <a class="exercice-link" href="/exercice/{{.ExerciceName}}">
@@ -66,7 +60,9 @@
                     <p class="text" id="out">{{.ExerciceOutput}}</p>
                 </div>
                 <div class="submit">
-                    <input class="submitButton" type="button" value="Run Code &#129302;" onclick="sendCode()"></input>
+                    {{if .IsNotHome}}
+                        <input class="submitButton" type="button" value="Run Code &#129302;" onclick="sendCode()"></input>
+                    {{end}}
                 </div>
             </div>
             <div class="input">
@@ -91,6 +87,7 @@
             theme: 'darcula',
 });
 function sendCode() {
+    document.getElementById("out").innerHTML = "Sending code...<br>Compiling...";
     fetch('/sendCode', {
         method: 'POST',
         headers: {
