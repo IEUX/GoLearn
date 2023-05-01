@@ -3,10 +3,7 @@ package server
 import (
 	"Golearn/modules/auth"
 	"Golearn/modules/client"
-	"fmt"
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
 
 func InitServer() *http.ServeMux {

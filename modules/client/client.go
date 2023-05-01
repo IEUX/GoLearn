@@ -47,7 +47,6 @@ var exercice3 ExerciceLink = ExerciceLink{
 }
 
 func HomePage(res http.ResponseWriter, req *http.Request) {
-	res.Write([]byte("Home page"))
 	res.WriteHeader(http.StatusOK)
 	res.Write([]byte("Home page"))
 }
