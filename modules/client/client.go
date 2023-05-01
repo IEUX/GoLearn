@@ -1,7 +1,9 @@
 package client
 
 import (
+	"Golearn/modules/auth"
 	"Golearn/modules/container"
+	"Golearn/modules/database"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -23,32 +25,19 @@ type exercicePageVars struct {
 }
 
 type ExerciceLink struct {
-	ID           int
 	ExerciceName string
 	ExerciceDone bool
-}
-
-var exercice1 ExerciceLink = ExerciceLink{
-	ID:           1,
-	ExerciceName: "Hello World",
-	ExerciceDone: true,
-}
-
-var exercice2 ExerciceLink = ExerciceLink{
-	ID:           2,
-	ExerciceName: "Print Alphabet",
-	ExerciceDone: false,
-}
-
-var exercice3 ExerciceLink = ExerciceLink{
-	ID:           3,
-	ExerciceName: "Print Numbers",
-	ExerciceDone: false,
 }
 
 func HomePage(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusOK)
 	res.Write([]byte("Home page"))
+}
+
+func NotLogged(res http.ResponseWriter, req *http.Request) {
+	tmpl := template.Must(template.ParseFiles("./CLIENT/static/notLogin.gohtml"))
+	_ = tmpl.Execute(res, req)
+	return
 }
 
 func ExercicePage(res http.ResponseWriter, req *http.Request) {
@@ -60,15 +49,30 @@ func ExercicePage(res http.ResponseWriter, req *http.Request) {
 		isConnected = true
 	}
 	title := strings.Split(req.URL.Path, "/exercice/")[1]
-	var exercicesList []ExerciceLink
-	exercicesList = append(exercicesList, exercice1, exercice2, exercice3)
+	currentLogIn, isOk := auth.ExtractClaims(res, req)
+	if !isOk {
+		http.Redirect(res, req, "/notLogged", http.StatusSeeOther)
+		return
+	}
+	currentExersise := database.GetExerciseByName(title)
+	//PREP Exercises List
+	exercicesList := []ExerciceLink{}
+	exercices := database.GetExerciseNameList()
+	for _, exercice := range exercices {
+		if database.GetExerciseByName(exercice).IdExercise < currentLogIn.Progression {
+			exercicesList = append(exercicesList, ExerciceLink{ExerciceName: exercice, ExerciceDone: true})
+		} else {
+			exercicesList = append(exercicesList, ExerciceLink{ExerciceName: exercice, ExerciceDone: false})
+		}
+	}
+	//END PREP
 	pageData := exercicePageVars{
-		Title:          "GoLearn | Hello World !",
-		ExerciceTitle:  title,
-		ExercicePrompt: "Write a program that prints ‘Hello World’ to the screen.",
-		ExerciceOutput: "Click Run Code to test you code ",
+		Title:          "GoLearn | " + currentExersise.Title,
+		ExerciceTitle:  currentExersise.Title,
+		ExercicePrompt: currentExersise.Prompt,
+		ExerciceOutput: "Click Run Code to test you code !",
 		ExercicesList:  exercicesList,
-		User:           "User",
+		User:           currentLogIn.Name,
 		IsConnected:    isConnected,
 	}
 	tmpl := template.Must(template.ParseFiles("./CLIENT/static/exercicePage.gohtml"))

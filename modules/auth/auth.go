@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"Golearn/modules/client"
 	"Golearn/modules/database"
 	"fmt"
 	"net/http"
@@ -25,7 +24,7 @@ type Claims struct {
 }
 
 func Login(res http.ResponseWriter, req *http.Request) {
-	client.CORSManager(res, req)
+	CORSManager(res, req)
 	if req.Method == "POST" {
 		var user Creds
 		user.Email = req.FormValue("email")
@@ -74,7 +73,7 @@ func Login(res http.ResponseWriter, req *http.Request) {
 
 func Register(res http.ResponseWriter, req *http.Request) {
 	if req.Method == "POST" {
-		client.CORSManager(res, req)
+		CORSManager(res, req)
 		var user Creds
 		user.Email = req.FormValue("email")
 		user.Username = req.FormValue("username")
@@ -99,7 +98,7 @@ func Register(res http.ResponseWriter, req *http.Request) {
 }
 
 func Logout(res http.ResponseWriter, req *http.Request) {
-	client.CORSManager(res, req)
+	CORSManager(res, req)
 	clearCookie := &http.Cookie{
 		Name:   "token",
 		Value:  "",
@@ -109,15 +108,15 @@ func Logout(res http.ResponseWriter, req *http.Request) {
 	http.Redirect(res, req, "/", http.StatusFound)
 }
 
-func ExtractClaims(w http.ResponseWriter, r *http.Request) {
+func ExtractClaims(w http.ResponseWriter, r *http.Request) (database.User, bool) {
 	c, err := r.Cookie("token")
 	if err != nil {
 		if err == http.ErrNoCookie {
 			w.WriteHeader(http.StatusUnauthorized)
-			return
+			return database.User{}, false
 		}
 		w.WriteHeader(http.StatusBadRequest)
-		return
+		return database.User{}, false
 	}
 
 	tknStr := c.Value
@@ -130,18 +129,24 @@ func ExtractClaims(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if err == jwt.ErrSignatureInvalid {
 			w.WriteHeader(http.StatusUnauthorized)
-			return
+			return database.User{}, false
 		}
 		w.WriteHeader(http.StatusBadRequest)
-		return
+		return database.User{}, false
 	}
 	if !tkn.Valid {
 		w.WriteHeader(http.StatusUnauthorized)
-		return
+		return database.User{}, false
 	}
-
-	fmt.Printf("%s\n", claims.Email)
 	var user database.User
 	user = database.GetUserByMail(claims.Email)
-	fmt.Println(user)
+	return user, true
+}
+
+func CORSManager(res http.ResponseWriter, req *http.Request) {
+	origin := req.Header.Get("Origin")
+	res.Header().Set("Access-Control-Allow-Origin", origin)
+	res.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+	res.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	res.Header().Set("Access-Control-Allow-Credentials", "true")
 }

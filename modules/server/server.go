@@ -16,5 +16,6 @@ func InitServer() *http.ServeMux {
 	server.HandleFunc("/signup", auth.Register)
 	server.HandleFunc("/logout", auth.Logout)
 	server.HandleFunc("/sendCode", client.SendCode)
+	server.HandleFunc("/notLogged", client.NotLogged)
 	return server
 }

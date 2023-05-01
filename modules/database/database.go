@@ -18,6 +18,13 @@ type User struct {
 	Score       int
 }
 
+type Exercise struct {
+	IdExercise int
+	Title      string
+	Prompt     string
+	Difficulty int
+}
+
 // ---INIT---
 
 // Singleton for db instance
@@ -92,4 +99,32 @@ func GetUserByMail(mail string) User {
 
 	}
 	return user
+}
+
+func GetExerciseNameList() []string {
+	var exerciceNameList []string
+	rows, err := GetDbInstance().Query("SELECT Title FROM Exercise")
+	if err != nil {
+		log.Println("[DATABASE] Failed to get exercice name list [ERR]: ", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var exerciceName string
+		err := rows.Scan(&exerciceName)
+		if err != nil {
+			log.Println("[DATABASE] Failed to get exercice name list [ERR]: ", err)
+		}
+		exerciceNameList = append(exerciceNameList, exerciceName)
+	}
+	return exerciceNameList
+}
+
+func GetExerciseByName(name string) Exercise {
+	var exercise Exercise
+	err := GetDbInstance().QueryRow("SELECT * FROM Exercise WHERE Title = ?", name).Scan(&exercise.IdExercise, &exercise.Title, &exercise.Prompt, &exercise.Difficulty)
+	if err != nil {
+		log.Println("[DATABASE] Failed to get exercise by name [ERR]: ", err)
+		return Exercise{}
+	}
+	return exercise
 }
