@@ -24,10 +24,10 @@ header .box-logo {
 }
 
 header .box-logo .logo {
-    font-size: 2rem;
+    font-size: 3rem;
     color: #6AD7E5;
     font-weight: 900;
-    padding-left: 15%;
+    padding-left: 10%;
 }
 
 header .links {

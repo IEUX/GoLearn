@@ -5,6 +5,7 @@ import (
 	"Golearn/modules/server"
 	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -33,6 +34,6 @@ func main() {
 	fmt.Println("Server is running on http://localhost" + port)
 	err := http.ListenAndServe(port, server)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalln(err)
 	}
 }

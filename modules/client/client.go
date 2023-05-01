@@ -66,7 +66,7 @@ func ExercicePage(res http.ResponseWriter, req *http.Request) {
 		Title:          "GoLearn | Hello World !",
 		ExerciceTitle:  title,
 		ExercicePrompt: "Write a program that prints ‘Hello World’ to the screen.",
-		ExerciceOutput: "Click <a>Run Code</a> to test you code ",
+		ExerciceOutput: "Click Run Code to test you code ",
 		ExercicesList:  exercicesList,
 		User:           "User",
 		IsConnected:    isConnected,
