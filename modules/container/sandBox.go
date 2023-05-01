@@ -1,4 +1,4 @@
-package sandboxcontainer
+package container
 
 import (
 	"bytes"

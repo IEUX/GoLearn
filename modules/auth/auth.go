@@ -5,6 +5,7 @@ import (
 	"Golearn/modules/database"
 	"fmt"
 	"net/http"
+	"text/template"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -65,6 +66,9 @@ func Login(res http.ResponseWriter, req *http.Request) {
 			Expires: expirationTime,
 		})
 		http.Redirect(res, req, "/", http.StatusFound)
+	} else if req.Method == "GET" {
+		tmpl := template.Must(template.ParseFiles("./CLIENT/static/login.gohtml"))
+		_ = tmpl.Execute(res, req)
 	}
 }
 
@@ -88,6 +92,9 @@ func Register(res http.ResponseWriter, req *http.Request) {
 		fmt.Println("Continue")
 		database.InsertUser(user.Username, user.Email, user.Password)
 		Login(res, req)
+	} else if req.Method == "GET" {
+		tmpl := template.Must(template.ParseFiles("./CLIENT/static/signup.gohtml"))
+		_ = tmpl.Execute(res, req)
 	}
 }
 
