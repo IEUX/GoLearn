@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{.Title}} </title>
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/static/CSS/home.css">
+
+</head>
+    <header>
+        <div class="box-logo">
+            <a class="logo" href="/">GoLearn</a>
+        </div>
+        <div class="links"></div>
+        <div class="buttons">
+            {{if .IsConnected}}
+                <p style="color: #F6D2A2;font-size: 1.2rem;">Welcome {{.Username}}</p>
+                <a class="signup-button" href="/logout">Logout</a>
+            {{else}}
+                <a class="login-button" href="/login">Sign In</a>
+                <a class="signup-button" href="/signup">Sign Up</a>
+            {{end}}
+        </div>
+    </header>
+        <div class="container">
+            <div class="center-about">
+                <div class="about">
+                    <div class="QandA">
+                        <h3>What is GoLearn ?</h3>
+                        <p>GoLearn it's a website where you can learn to code with Golang, but...</p>
+                    </div>
+                    <div class="QandA">
+                        <h3>What is Golang ?</h3>
+                        <p>Go was created at Google in 2007, and since then, engineering teams across Google have adopted Go to build products and services at massive scale. So ...</p>
+                    </div>
+                    <div class="QandA">
+                        <h3>Why Golang ?</h3>
+                        <p>Go is a relatively simple but rigorous language that have plenty of usage and a good scalability even for big scale projects or cool website like this one</p>
+                    </div>
+                    <div class="QandA">
+                        <h3>Convinced ?</h3>
+                        <div class="inLine"><p>Start with us and become a real </p><p style="color:#6AD7E5; font-weight:900; margin-left:1%;"> Gopher</p></div>
+                    </div>
+                    <div class="input">
+                            <a href="/signup">Create an account</a>
+                    </div>
+                </div>
+            </div>
+            <div class="gopher-trello">
+                <img src="/static/SRC/gopherTrello.png" alt="gopher">
+            </div>
+            <div class="center-resume">
+                <div class="resume-exercise">
+                    <div class="title">
+                        <h3>Resume your progression</h3>
+                        <p>Get back where you left off</p>
+                    </div>
+                    {{if .IsConnected}}
+                        <div class="input">
+                            <a href="/exercice/{{.NextExercise.Title}}">Go to {{.NextExercise.Title}}</a>
+                        </div>
+                    {{else}}
+                        <div class="input">
+                            <p>You need to be connected to resume your progression</p>
+                            <a href="/login">Sign In</a>
+                        </div>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+    <body>
+    </body>
+</html>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>{{.Title}}</title>
+    <title>{{.Title}} </title>
     <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="/static/CSS/exercicePage.css">
     <!-- CodeMirror -->
@@ -14,7 +14,7 @@
 <body>
     <header>
         <div class="box-logo">
-            <h1 class="logo">GoLearn</h1>
+            <a class="logo" href="/">GoLearn</a>
         </div>
         <div class="links"></div>
         <div class="buttons">
@@ -30,7 +30,7 @@
                     <a class="exercice-link" href="/exercice/{{.ExerciceName}}">
                         <p class="link-title" style="padding-left: 2%;">{{.ExerciceName}}</p>
                         {{if .ExerciceDone}}
-                            <svg class="ping" width="64px" height="64px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" fill="#00FF00"></path> </g></svg>
+                            <svg class="ping" width="64px" height="64px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" fill="#6AD7E5"></path> </g></svg>                         
                         {{else}}
                             <svg class="ping" width="64px" height="64px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" fill="#ff0000"></path> </g></svg>
                         {{end}}

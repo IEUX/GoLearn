@@ -128,3 +128,13 @@ func GetExerciseByName(name string) Exercise {
 	}
 	return exercise
 }
+
+func GetExerciseByID(ID int) Exercise {
+	var exercise Exercise
+	err := GetDbInstance().QueryRow("SELECT * FROM Exercise WHERE ID_Exercise = ?", ID).Scan(&exercise.IdExercise, &exercise.Title, &exercise.Prompt, &exercise.Difficulty)
+	if err != nil {
+		log.Println("[DATABASE] Failed to get exercise by ID [ERR]: ", err)
+		return Exercise{}
+	}
+	return exercise
+}

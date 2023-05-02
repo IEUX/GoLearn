@@ -99,10 +99,10 @@ func TestCode(user string) []byte {
 		}
 		fmt.Println("--- Error during compilation ---")
 		fmt.Println(string(bytes.Join(sendBackErr, []byte("\n"))))
+		fmt.Println(err)
 		return nil
 	}
 	//-[RUN DOCKER IMAGE]-
-	_, err = cmd.Output()
 	out, err := exec.Command("/bin/sh", "-c", runDocker).Output()
 	if err != nil {
 		fmt.Println(err)

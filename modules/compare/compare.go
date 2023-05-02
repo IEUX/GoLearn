@@ -17,11 +17,9 @@ func GetSolution(title string) string {
 }
 
 func Compar(solution string, userResponse string, w http.ResponseWriter, r *http.Request) bool {
-	fmt.Println("Solution: " + solution)
-	fmt.Println("User: " + userResponse)
 	user, _ := auth.ExtractClaims(w, r)
 	if solution == userResponse {
-		database.GetDbInstance().QueryRow("UPDATE User SET Progression = Progression + 1 WHERE User.Username = ?", user.Name)
+		database.GetDbInstance().Exec("UPDATE User SET Progression = Progression + 1 WHERE User.Username = ?", user.Name)
 		return true
 	} else {
 		return false
