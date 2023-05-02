@@ -102,8 +102,7 @@ func TestCode(user string) []byte {
 		return nil
 	}
 	//-[RUN DOCKER IMAGE]-
-	result, err := cmd.Output()
-	fmt.Printf("%s", result)
+	_, err = cmd.Output()
 	out, err := exec.Command("/bin/sh", "-c", runDocker).Output()
 	if err != nil {
 		fmt.Println(err)

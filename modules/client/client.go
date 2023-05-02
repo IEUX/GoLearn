@@ -6,7 +6,6 @@ import (
 	"Golearn/modules/container"
 	"Golearn/modules/database"
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -95,7 +94,8 @@ func CORSManager(res http.ResponseWriter, req *http.Request) {
 }
 
 type Code struct {
-	Code string
+	Code     string
+	Exercice string
 }
 
 type Result struct {
@@ -118,12 +118,17 @@ func SendCode(res http.ResponseWriter, req *http.Request) {
 	jsonResult := Result{
 		Result: string(result),
 	}
-	fmt.Println(jsonResult.Result)
+	check := compare.Compar(compare.GetSolution(code.Exercice), string(result), res, req)
+	solution := compare.GetSolution(code.Exercice)
+	if check {
+		jsonResult.Result += "<br><br>&#9989 Well done!"
+	} else {
+		jsonResult.Result += "<br><br>&#10060 Try again !" + "<br>Expected output : " + solution
+	}
 	jsonData, err := json.Marshal(jsonResult)
 	if err != nil {
 		log.Println(err)
 	}
 	res.Write(jsonData)
-	compare.Compar(compare.GetSolution(req), string(result), res, req)
 
 }
