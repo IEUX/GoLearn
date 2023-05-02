@@ -9,6 +9,7 @@ import (
 )
 
 func GetSolution(req *http.Request) string {
+	fmt.Println(req.URL.Path)
 	title := strings.Split(req.URL.Path, "/exercice/")[1]
 	var solution string
 	err := database.GetDbInstance().QueryRow("SELECT solution FROM Exercise inner join Solution S on Exercise.ID_Exercise = S.ID_Exercise WHERE title = ?", title).Scan(&solution)

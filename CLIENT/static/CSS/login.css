@@ -5,15 +5,43 @@
     font-family: 'Roboto';
 }
 
-body {
-    background: rgb(25,25,25);
-    background: linear-gradient(180deg, rgba(25,25,25,1) 0%, rgba(41,41,41,1) 15%);
+a {
+    text-decoration: none;
+}
+
+header {
+    height: 20vh;
     width: 100vw;
-    height: 100vh;
+    background: rgb(25,25,25);
+    background: linear-gradient(180deg, rgba(25,25,25,1) 0%, rgba(41,41,41,1) 100%);
+    display: flex;
+}
+
+header .box-logo {
+    width: 20%;
+    display: flex;  
+    align-items: center; 
+}
+
+header .box-logo .logo {
+    font-size: 3rem;
+    color: #6AD7E5;
+    font-weight: 900;
+    padding-left: 10%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.body {
+    background-color: #292929;
+    width: 100vw;
+    height: 80vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: #666666 0px 0px 10px 0px;
 }
 
 body .container {

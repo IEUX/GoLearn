@@ -15,6 +15,13 @@ import (
 	"strings"
 )
 
+type homePageVars struct {
+	Title        string
+	Username     string
+	IsConnected  bool
+	NextExercise database.Exercise
+}
+
 type exercicePageVars struct {
 	Title          string
 	ExerciceTitle  string
@@ -31,8 +38,24 @@ type ExerciceLink struct {
 }
 
 func HomePage(res http.ResponseWriter, req *http.Request) {
-	res.WriteHeader(http.StatusOK)
-	res.Write([]byte("Home page"))
+	currentLogIn, isOk := auth.ExtractClaims(res, req)
+	var nextExercise database.Exercise
+	if isOk {
+		nextExercise = database.GetExerciseByID(currentLogIn.Progression + 1)
+	}
+	pageData := homePageVars{
+		Title:        "GoLearn | Home",
+		Username:     currentLogIn.Name,
+		IsConnected:  isOk,
+		NextExercise: nextExercise,
+	}
+	tmpl := template.Must(template.ParseFiles("./CLIENT/static/home.gohtml"))
+	err := tmpl.Execute(res, pageData)
+	if err != nil {
+		log.Println(err)
+		res.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func NotLogged(res http.ResponseWriter, req *http.Request) {
@@ -61,7 +84,7 @@ func ExercicePage(res http.ResponseWriter, req *http.Request) {
 	exercicesList := []ExerciceLink{}
 	exercices := database.GetExerciseNameList()
 	for _, exercice := range exercices {
-		if database.GetExerciseByName(exercice).IdExercise < currentLogIn.Progression {
+		if database.GetExerciseByName(exercice).IdExercise <= currentLogIn.Progression {
 			exercicesList = append(exercicesList, ExerciceLink{ExerciceName: exercice, ExerciceDone: true})
 		} else {
 			exercicesList = append(exercicesList, ExerciceLink{ExerciceName: exercice, ExerciceDone: false})
