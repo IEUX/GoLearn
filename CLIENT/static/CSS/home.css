@@ -15,7 +15,7 @@ header {
     background: rgb(25,25,25);
     background: linear-gradient(180deg, rgba(25,25,25,1) 0%, rgba(41,41,41,1) 100%);
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-start;
 }
 
 header .box-logo {

@@ -15,7 +15,6 @@ type User struct {
 	Name        string
 	Email       string
 	Pwd         string
-	Score       int
 }
 
 type Exercise struct {
@@ -93,7 +92,7 @@ func HashPassword(password string) string {
 
 func GetUserByMail(mail string) User {
 	var user User
-	err := GetDbInstance().QueryRow("SELECT * FROM User WHERE Email = ?", mail).Scan(&user.IdUser, &user.Progression, &user.Name, &user.Email, &user.Pwd, &user.Score)
+	err := GetDbInstance().QueryRow("SELECT * FROM User WHERE Email = ?", mail).Scan(&user.IdUser, &user.Progression, &user.Name, &user.Email, &user.Pwd)
 	if err != nil {
 		log.Println("[DATABASE] Failed to get user by mail [ERR]: ", err)
 
