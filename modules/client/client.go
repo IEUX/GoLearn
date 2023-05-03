@@ -39,6 +39,10 @@ type ExerciceLink struct {
 
 func HomePage(res http.ResponseWriter, req *http.Request) {
 	currentLogIn, isOk := auth.ExtractClaims(res, req)
+	if req.URL.Path != "/" {
+		errorHandler(res, req, http.StatusNotFound)
+		return
+	}
 	var nextExercise database.Exercise
 	if isOk {
 		nextExercise = database.GetExerciseByID(currentLogIn.Progression + 1)
@@ -54,6 +58,13 @@ func HomePage(res http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Println(err)
 		res.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+func errorHandler(res http.ResponseWriter, req *http.Request, status int) {
+	if status == http.StatusNotFound {
+		tmpl := template.Must(template.ParseFiles("./CLIENT/static/404.gohtml"))
+		_ = tmpl.Execute(res, req)
 		return
 	}
 }
