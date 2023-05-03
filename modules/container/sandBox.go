@@ -88,6 +88,7 @@ func TestCode(user string) []byte {
 	//Build errors handling
 	var CompilationErr bytes.Buffer
 	cmd.Stderr = &CompilationErr
+
 	err := cmd.Run()
 	if err != nil {
 		var sendBackErr [][]byte
@@ -97,10 +98,8 @@ func TestCode(user string) []byte {
 			lines := bytes.Split([]byte(matches[1]), []byte("\n"))
 			sendBackErr = lines[1:]
 		}
-		fmt.Println("--- Error during compilation ---")
-		fmt.Println(string(bytes.Join(sendBackErr, []byte("\n"))))
-		fmt.Println(err)
-		return nil
+		out := bytes.Join(sendBackErr, []byte("<br>"))
+		return out
 	}
 	//-[RUN DOCKER IMAGE]-
 	out, err := exec.Command("/bin/sh", "-c", runDocker).Output()

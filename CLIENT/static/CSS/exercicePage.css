@@ -230,6 +230,7 @@ a{
 
 .content .exercice .output .submit .submitButton:hover { 
     background-color: #292929;
+    border: solid 2px #6AD7E5;
     color: #6AD7E5;
     cursor: pointer;
 }

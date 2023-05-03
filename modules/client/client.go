@@ -27,6 +27,7 @@ type exercicePageVars struct {
 	ExercicePrompt string
 	ExerciceOutput string
 	ExercicesList  []ExerciceLink
+	CanDo          bool
 	User           string
 	IsNotHome      bool
 }
@@ -58,17 +59,22 @@ func HomePage(res http.ResponseWriter, req *http.Request) {
 }
 
 func NotLogged(res http.ResponseWriter, req *http.Request) {
-	tmpl := template.Must(template.ParseFiles("./CLIENT/static/notLogin.gohtml"))
+	tmpl := template.Must(template.ParseFiles("./CLIENT/static/401.gohtml"))
 	_ = tmpl.Execute(res, req)
 	return
 }
 
+func Favicon(w http.ResponseWriter, r *http.Request) { //Get the favicon route
+	http.ServeFile(w, r, "./CLIENT/static/SRC/favicon.png")
+}
+
 func ExercicePage(res http.ResponseWriter, req *http.Request) {
 	var IsNotHome bool
+	var canDo bool = true
 	title := strings.Split(req.URL.Path, "/exercice/")[1]
 	currentLogIn, isOk := auth.ExtractClaims(res, req)
 	if !isOk {
-		http.Redirect(res, req, "/notLogged", http.StatusSeeOther)
+		NotLogged(res, req)
 		return
 	}
 	var currentExersise database.Exercise
@@ -89,6 +95,9 @@ func ExercicePage(res http.ResponseWriter, req *http.Request) {
 			exercicesList = append(exercicesList, ExerciceLink{ExerciceName: exercice, ExerciceDone: false})
 		}
 	}
+	if currentExersise.IdExercise > currentLogIn.Progression+1 {
+		canDo = false
+	}
 	//END PREP
 	pageData := exercicePageVars{
 		Title:          "GoLearn | " + currentExersise.Title,
@@ -96,6 +105,7 @@ func ExercicePage(res http.ResponseWriter, req *http.Request) {
 		ExercicePrompt: currentExersise.Prompt,
 		ExerciceOutput: "Click Run Code to test you code !",
 		ExercicesList:  exercicesList,
+		CanDo:          canDo,
 		User:           currentLogIn.Name,
 		IsNotHome:      IsNotHome,
 	}
@@ -149,7 +159,7 @@ func SendCode(res http.ResponseWriter, req *http.Request) {
 	jsonResult := Result{
 		Result: string(result),
 	}
-	check := compare.Compar(compare.GetSolution(code.Exercice), string(result), res, req)
+	check := compare.Compar(code.Exercice, string(result), res, req)
 	solution := compare.GetSolution(code.Exercice)
 	if check {
 		jsonResult.Result += "<br><br>&#9989 Well done!"
@@ -160,6 +170,5 @@ func SendCode(res http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println(string(jsonData))
 	res.Write(jsonData)
 }

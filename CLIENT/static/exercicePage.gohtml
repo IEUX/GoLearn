@@ -24,7 +24,7 @@
     </header>
     <div class="content">
         <div class="nav">
-            <a class="title" href="/exercice">&#127969; Exercice</a>
+            <a class="title" href="/exercice">Exercises</a>
             <div class="links">
                 {{range .ExercicesList}}
                     <a class="exercice-link" href="/exercice/{{.ExerciceName}}">
@@ -61,7 +61,11 @@
                 </div>
                 <div class="submit">
                     {{if .IsNotHome}}
-                        <input class="submitButton" type="button" value="Run Code &#129302;" onclick="sendCode()"></input>
+                        {{if .CanDo}}
+                            <input class="submitButton" type="button" value="Run Code &#129302;" onclick="sendCode()"></input>
+                        {{else}}
+                            <p class="text" style="color: #6AD7E5;">You have to finish the previous exercice to do this one</p>
+                        {{end}}
                     {{end}}
                 </div>
             </div>

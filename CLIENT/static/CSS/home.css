@@ -1,6 +1,8 @@
 * {
     margin: 0;
     font-family: 'Roboto';
+    overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 a{
@@ -103,9 +105,8 @@ header .buttons .signup-button:hover {
     background-color: #313335;  
 }
 
-.container .center-about .about .QandA {
-    height: 10%;
-    padding: 5%;
+.container .center-about .about .QandA {    
+    padding: 3%;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -130,15 +131,15 @@ header .buttons .signup-button:hover {
 }
 
 .container .center-resume .resume-exercise .title {
-    height: 15%;
-    padding: 5%;
+    margin: 2%;
+    height: 26%;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
 }
 
 .container .center-resume .resume-exercise .input {
-    height:75%;
+    height:60%;
     padding: 5%;
     display: flex;
     flex-direction: column;

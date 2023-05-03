@@ -4,7 +4,6 @@ import (
 	"Golearn/modules/database"
 	"Golearn/modules/server"
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -21,7 +20,7 @@ func main() {
 	defer cnx.Close()
 	server := server.InitServer()
 	port := ":8080"
-	fmt.Println("Server is running on http://localhost" + port)
+	log.Println("[SERVER] Server is running on http://localhost" + port)
 	err := http.ListenAndServe(port, server)
 	if err != nil {
 		log.Fatalln(err)

@@ -2,7 +2,6 @@ package auth
 
 import (
 	"Golearn/modules/database"
-	"fmt"
 	"net/http"
 	"text/template"
 	"time"
@@ -23,6 +22,10 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
+type Error struct {
+	Message string
+}
+
 func Login(res http.ResponseWriter, req *http.Request) {
 	CORSManager(res, req)
 	if req.Method == "POST" {
@@ -30,22 +33,22 @@ func Login(res http.ResponseWriter, req *http.Request) {
 		user.Email = req.FormValue("email")
 		user.Password = req.FormValue("password")
 		if user.Email == "" || user.Password == "" {
-			res.WriteHeader(http.StatusBadRequest)
-			res.Write([]byte("Email or password is empty"))
+			tmpl := template.Must(template.ParseFiles("./CLIENT/static/login.gohtml"))
+			_ = tmpl.Execute(res, Error{Message: "Email or password is empty"})
 			return
 		}
 		if !database.CheckUserExist(user.Email) {
-			res.WriteHeader(http.StatusUnauthorized)
-			res.Write([]byte("User does not exist"))
+			tmpl := template.Must(template.ParseFiles("./CLIENT/static/login.gohtml"))
+			_ = tmpl.Execute(res, Error{Message: "Wrong Email or Password"})
 			return
 		}
 		dbPassword := database.GetUserPassword(user.Email)
 		if dbPassword != database.HashPassword(user.Password) {
-			res.WriteHeader(http.StatusUnauthorized)
-			res.Write([]byte("Wrong password"))
+			tmpl := template.Must(template.ParseFiles("./CLIENT/static/login.gohtml"))
+			_ = tmpl.Execute(res, Error{Message: "Wrong Email or Password"})
 			return
 		}
-		expirationTime := time.Now().Add(5 * time.Minute)
+		expirationTime := time.Now().Add(20 * time.Minute)
 		claims := &Claims{
 			Email: user.Email,
 			RegisteredClaims: jwt.RegisteredClaims{
@@ -67,7 +70,7 @@ func Login(res http.ResponseWriter, req *http.Request) {
 		http.Redirect(res, req, "/", http.StatusFound)
 	} else if req.Method == "GET" {
 		tmpl := template.Must(template.ParseFiles("./CLIENT/static/login.gohtml"))
-		_ = tmpl.Execute(res, req)
+		_ = tmpl.Execute(res, Error{Message: ""})
 	}
 }
 
@@ -79,21 +82,20 @@ func Register(res http.ResponseWriter, req *http.Request) {
 		user.Username = req.FormValue("username")
 		user.Password = req.FormValue("password")
 		if user.Email == "" || user.Username == "" || user.Password == "" {
-			res.WriteHeader(http.StatusBadRequest)
-			res.Write([]byte("Email, username or password is empty"))
+			tmpl := template.Must(template.ParseFiles("./CLIENT/static/signup.gohtml"))
+			_ = tmpl.Execute(res, Error{Message: "Email or password is empty"})
 			return
 		}
 		if database.CheckUserExist(user.Email) {
-			res.WriteHeader(http.StatusConflict)
-			res.Write([]byte("User already exist during insertion"))
+			tmpl := template.Must(template.ParseFiles("./CLIENT/static/signup.gohtml"))
+			_ = tmpl.Execute(res, Error{Message: "User already exist"})
 			return
 		}
-		fmt.Println("Continue")
 		database.InsertUser(user.Username, user.Email, user.Password)
 		Login(res, req)
 	} else if req.Method == "GET" {
 		tmpl := template.Must(template.ParseFiles("./CLIENT/static/signup.gohtml"))
-		_ = tmpl.Execute(res, req)
+		_ = tmpl.Execute(res, Error{Message: ""})
 	}
 }
 

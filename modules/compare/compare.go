@@ -16,10 +16,12 @@ func GetSolution(title string) string {
 	return solution
 }
 
-func Compar(solution string, userResponse string, w http.ResponseWriter, r *http.Request) bool {
+func Compar(exercice string, userResponse string, w http.ResponseWriter, r *http.Request) bool {
 	user, _ := auth.ExtractClaims(w, r)
-	if solution == userResponse {
-		database.GetDbInstance().Exec("UPDATE User SET Progression = Progression + 1 WHERE User.Username = ?", user.Name)
+	if GetSolution(exercice) == userResponse {
+		if database.GetExerciseByName(exercice).IdExercise-1 == user.Progression {
+			database.GetDbInstance().Exec("UPDATE User SET Progression = Progression + 1 WHERE User.Username = ?", user.Name)
+		}
 		return true
 	} else {
 		return false
