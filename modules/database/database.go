@@ -65,7 +65,7 @@ func CheckUserExist(email string) bool {
 
 func InsertUser(name string, email string, password string) {
 	password = HashPassword(password)
-	_, err := GetDbInstance().Exec("INSERT INTO User (Progression, Username, Email, Password, Exp) VALUES (?, ?, ?, ?, ?)", 0, name, email, password, 0)
+	_, err := GetDbInstance().Exec("INSERT INTO User (Progression, Username, Email, Password) VALUES (?, ?, ?, ?)", 0, name, email, password, 0)
 	if err != nil {
 		log.Println("[DATABASE] Failed to insert user [ERR]: ", err)
 	}
