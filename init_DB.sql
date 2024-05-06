@@ -1,23 +1,31 @@
-CREATE TABLE IF NOT EXISTS User(
-    ID_User INTEGER PRIMARY KEY,
-    Progression INTEGER ,
-    Username varchar(30),
-    Email varchar(255),
-    Password varchar(255),
-    Exp INTEGER,
-    FOREIGN KEY (Progression) REFERENCES Exercise(ID_Exercise)
+create table Exercise
+(
+    ID_Exercise        INTEGER
+        primary key,
+    Title              varchar(255),
+    Prompt             TEXT,
+    Difficulty         INTEGER,
+    function_structure TEXT
 );
 
-CREATE TABLE IF NOT EXISTS Exercise(
-    ID_Exercise INTEGER PRIMARY KEY,
-    Title varchar(255),
-    Prompt TEXT,
-    Difficulty INTEGER
+create table Solution
+(
+    ID_Solution INTEGER
+        primary key,
+    ID_Exercise INTEGER
+        references Exercise,
+    Solution    TEXT,
+    Test        TEXT
 );
 
-CREATE TABLE IF NOT EXISTS Solution(
-    ID_Solution INTEGER PRIMARY KEY,
-    ID_Exercise INTEGER ,
-    Solution TEXT,
-    FOREIGN KEY (ID_Exercise) REFERENCES Exercise(ID_Exercise)
+create table User
+(
+    ID_User     INTEGER
+        primary key,
+    Progression INTEGER
+        references Exercise,
+    Username    varchar(30),
+    Email       varchar(255),
+    Password    varchar(255),
+    Exp         INTEGER
 );
