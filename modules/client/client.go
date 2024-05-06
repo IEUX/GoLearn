@@ -11,7 +11,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 )
 
 type homePageVars struct {
@@ -22,14 +24,15 @@ type homePageVars struct {
 }
 
 type exercicePageVars struct {
-	Title          string
-	ExerciceTitle  string
-	ExercicePrompt string
-	ExerciceOutput string
-	ExercicesList  []ExerciceLink
-	CanDo          bool
-	User           string
-	IsNotHome      bool
+	Title             string
+	ExerciceTitle     string
+	ExercicePrompt    string
+	ExerciceOutput    string
+	FunctionStructure string
+	ExercicesList     []ExerciceLink
+	CanDo             bool
+	User              string
+	IsNotHome         bool
 }
 
 type ExerciceLink struct {
@@ -48,7 +51,7 @@ func HomePage(res http.ResponseWriter, req *http.Request) {
 		nextExercise = database.GetExerciseByID(currentLogIn.Progression + 1)
 	}
 	pageData := homePageVars{
-		Title:        "GoLearn | Home",
+		Title:        "Questline | Home",
 		Username:     currentLogIn.Name,
 		IsConnected:  isOk,
 		NextExercise: nextExercise,
@@ -93,7 +96,7 @@ func ExercicePage(res http.ResponseWriter, req *http.Request) {
 		currentExersise = database.GetExerciseByName(title)
 		IsNotHome = true
 	} else {
-		currentExersise = database.Exercise{IdExercise: 0, Title: "Welcome to GoLearn", Prompt: "Select an exercise to start learning Go !", Difficulty: 0}
+		currentExersise = database.Exercise{IdExercise: 0, Title: "Welcome to QuestLine", Prompt: "Select an exercise to start learning Go !", Difficulty: 0}
 		IsNotHome = false
 	}
 	//PREP Exercises List
@@ -111,14 +114,15 @@ func ExercicePage(res http.ResponseWriter, req *http.Request) {
 	}
 	//END PREP
 	pageData := exercicePageVars{
-		Title:          "GoLearn | " + currentExersise.Title,
-		ExerciceTitle:  currentExersise.Title,
-		ExercicePrompt: currentExersise.Prompt,
-		ExerciceOutput: "Click Run Code to test you code !",
-		ExercicesList:  exercicesList,
-		CanDo:          canDo,
-		User:           currentLogIn.Name,
-		IsNotHome:      IsNotHome,
+		Title:             "QuestLine | " + currentExersise.Title,
+		ExerciceTitle:     currentExersise.Title,
+		ExercicePrompt:    currentExersise.Prompt,
+		ExerciceOutput:    "Click Run Code to test you code !",
+		ExercicesList:     exercicesList,
+		CanDo:             canDo,
+		User:              currentLogIn.Name,
+		IsNotHome:         IsNotHome,
+		FunctionStructure: currentExersise.FunctionStructure,
 	}
 	tmpl := template.Must(template.ParseFiles("./CLIENT/static/exercicePage.gohtml"))
 	err := tmpl.Execute(res, pageData)
@@ -147,20 +151,26 @@ type Result struct {
 }
 
 func SendCode(res http.ResponseWriter, req *http.Request) {
-	var code Code
+	tStart := time.Now()
+	var userCode Code
 	b, err := io.ReadAll(req.Body)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	err = json.Unmarshal(b, &code)
+	err = json.Unmarshal(b, &userCode)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	path := container.CreateCodeFile("user", code.Code)
+	callingCode := compare.GetTest(userCode.Exercice)
+	code := callingCode + "\n" + userCode.Code
+	path := container.CreateCodeFile("user", code)
 	result := container.TestCode(path)
 	if result == nil {
 		log.Println("Error compiling")
-		res.Write([]byte("Error"))
+		_, err := res.Write([]byte("Error"))
+		if err != nil {
+			return
+		}
 		return
 	}
 	err = os.RemoveAll(path)
@@ -170,16 +180,19 @@ func SendCode(res http.ResponseWriter, req *http.Request) {
 	jsonResult := Result{
 		Result: string(result),
 	}
-	check := compare.Compar(code.Exercice, string(result), res, req)
-	solution := compare.GetSolution(code.Exercice)
+	check := compare.Compar(userCode.Exercice, string(result), res, req)
+	solution := compare.GetSolution(userCode.Exercice)
 	if check {
-		jsonResult.Result += "<br><br>&#9989 Well done!"
+		jsonResult.Result += "<br><br>&#9989 Well done!<br><br>Code tested in " + strconv.FormatFloat(float64(time.Since(tStart))/1e9, 'f', 2, 64) + " sec"
 	} else {
-		jsonResult.Result += "<br><br>&#10060 Try again !" + "<br>Expected output : " + solution
+		jsonResult.Result += "<br><br>&#10060 Try again !" + "<br>Expected output : " + solution + "<br><br>Code tested in " + strconv.FormatFloat(float64(time.Since(tStart))/1e9, 'f', 2, 64) + " sec"
 	}
 	jsonData, err := json.Marshal(jsonResult)
 	if err != nil {
 		log.Println(err)
 	}
-	res.Write(jsonData)
+	_, err = res.Write(jsonData)
+	if err != nil {
+		return
+	}
 }

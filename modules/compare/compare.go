@@ -16,6 +16,15 @@ func GetSolution(title string) string {
 	return solution
 }
 
+func GetTest(title string) string {
+	var test string
+	err := database.GetDbInstance().QueryRow("SELECT Test FROM Solution inner join Exercise on Solution.ID_Exercise = Exercise.ID_Exercise WHERE Title = ?", title).Scan(&test)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return test
+}
+
 func Compar(exercice string, userResponse string, w http.ResponseWriter, r *http.Request) bool {
 	user, _ := auth.ExtractClaims(w, r)
 	if GetSolution(exercice) == userResponse {

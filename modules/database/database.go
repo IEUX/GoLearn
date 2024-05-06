@@ -4,9 +4,8 @@ import (
 	"crypto/sha1"
 	"database/sql"
 	"encoding/hex"
-	"log"
-
 	_ "github.com/mattn/go-sqlite3"
+	"log"
 )
 
 type User struct {
@@ -15,13 +14,15 @@ type User struct {
 	Name        string
 	Email       string
 	Pwd         string
+	Exp         int
 }
 
 type Exercise struct {
-	IdExercise int
-	Title      string
-	Prompt     string
-	Difficulty int
+	IdExercise        int
+	Title             string
+	Prompt            string
+	Difficulty        int
+	FunctionStructure string
 }
 
 // ---INIT---
@@ -65,7 +66,7 @@ func CheckUserExist(email string) bool {
 
 func InsertUser(name string, email string, password string) {
 	password = HashPassword(password)
-	_, err := GetDbInstance().Exec("INSERT INTO User (Progression, Username, Email, Password) VALUES (?, ?, ?, ?)", 0, name, email, password, 0)
+	_, err := GetDbInstance().Exec("INSERT INTO User (Progression, Username, Email, Password, Exp) VALUES (?, ?, ?, ?, ?)", 0, name, email, password, 0)
 	if err != nil {
 		log.Println("[DATABASE] Failed to insert user [ERR]: ", err)
 	}
@@ -92,7 +93,7 @@ func HashPassword(password string) string {
 
 func GetUserByMail(mail string) User {
 	var user User
-	err := GetDbInstance().QueryRow("SELECT * FROM User WHERE Email = ?", mail).Scan(&user.IdUser, &user.Progression, &user.Name, &user.Email, &user.Pwd)
+	err := GetDbInstance().QueryRow("SELECT * FROM User WHERE Email = ?", mail).Scan(&user.IdUser, &user.Progression, &user.Name, &user.Email, &user.Pwd, &user.Exp)
 	if err != nil {
 		log.Println("[DATABASE] Failed to get user by mail [ERR]: ", err)
 
@@ -120,7 +121,7 @@ func GetExerciseNameList() []string {
 
 func GetExerciseByName(name string) Exercise {
 	var exercise Exercise
-	err := GetDbInstance().QueryRow("SELECT * FROM Exercise WHERE Title = ?", name).Scan(&exercise.IdExercise, &exercise.Title, &exercise.Prompt, &exercise.Difficulty)
+	err := GetDbInstance().QueryRow("SELECT * FROM Exercise WHERE Title = ?", name).Scan(&exercise.IdExercise, &exercise.Title, &exercise.Prompt, &exercise.Difficulty, &exercise.FunctionStructure)
 	if err != nil {
 		log.Println("[DATABASE] Failed to get exercise by name [ERR]: ", err)
 		return Exercise{}
@@ -130,7 +131,7 @@ func GetExerciseByName(name string) Exercise {
 
 func GetExerciseByID(ID int) Exercise {
 	var exercise Exercise
-	err := GetDbInstance().QueryRow("SELECT * FROM Exercise WHERE ID_Exercise = ?", ID).Scan(&exercise.IdExercise, &exercise.Title, &exercise.Prompt, &exercise.Difficulty)
+	err := GetDbInstance().QueryRow("SELECT * FROM Exercise WHERE ID_Exercise = ?", ID).Scan(&exercise.IdExercise, &exercise.Title, &exercise.Prompt, &exercise.Difficulty, &exercise.FunctionStructure)
 	if err != nil {
 		log.Println("[DATABASE] Failed to get exercise by ID [ERR]: ", err)
 		return Exercise{}

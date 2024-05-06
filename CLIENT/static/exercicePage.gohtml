@@ -14,7 +14,7 @@
 <body>
     <header>
         <div class="box-logo">
-            <a class="logo" href="/">GoLearn</a>
+            <a class="logo" href="/">QuestLine</a>
         </div>
         <div class="links"></div>
         <div class="buttons">
@@ -24,7 +24,7 @@
     </header>
     <div class="content">
         <div class="nav">
-            <a class="title" href="/exercice">Exercises</a>
+            <a class="title" href="/exercice">Quests</a>
             <div class="links">
                 {{range .ExercicesList}}
                     <a class="exercice-link" href="/exercice/{{.ExerciceName}}">
@@ -75,7 +75,7 @@
                     <hr>
                 </div>
                 <div class="codeContainer">
-                    <textarea class="code" id="code" name="editor"></textarea>
+                    <label for="code"></label><textarea class="code" id="code" name="editor">{{.FunctionStructure}}</textarea>
                 </div>
             </div>
         </div>
